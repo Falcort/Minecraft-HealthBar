@@ -46,6 +46,10 @@ public class HealthBar implements Listener
 	/**
 	 * JavaDoc eventDoer
 	 * This method is use by all the EventHandler to update healthbar
+	 * it detect if the mobs have custom name and i if the customName contains a ❤
+	 * If it does it register to a table the mob
+	 * If the mob have a customName and the mob is register in the namestable it update with the customName
+	 * Else if update normaly
 	 * 
 	 * @param entity
 	 * @author Falcort alias Thibault SOUQUET
@@ -78,6 +82,10 @@ public class HealthBar implements Listener
 						updateHealthBar(entity, living, MaxHealth, CurrentHealth, entity.getEntityId());
 					}
 				}
+				else if (namesTable.containsKey(entity.getEntityId()))
+				{
+					updateHealthBar(entity, living, MaxHealth, CurrentHealth, entity.getEntityId());
+				}
 				else
 				{
 					updateHealthBar(entity, living, MaxHealth, CurrentHealth);
@@ -103,12 +111,17 @@ public class HealthBar implements Listener
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event)
 	{
-		Bukkit.broadcastMessage("" + namesTable);
-		if(event.getEntity().getCustomName() != null)
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
 		{
-			namesTable.remove(event.getEntity().getEntityId());
-			Bukkit.broadcastMessage("" + namesTable);
-		}
+			public void run()
+			{
+				if(event.getEntity().getCustomName() != null)
+				{
+					namesTable.remove(event.getEntity().getEntityId());
+				}
+			}
+		}, 60);
+		
 	}
 	/**
 	 * JavaDoc onEntityRegainHealthEvent
