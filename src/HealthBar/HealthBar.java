@@ -108,6 +108,14 @@ public class HealthBar implements Listener
 		eventDoer(event.getEntity());
 	}
 	
+	/**
+	 * JavaDoc onEntityDeath
+	 * This method remove the entity of the namesTable if she does and die
+	 * 
+	 * @param event
+	 * @author Falcort alias Thibault SOUQUET
+	 * @version 0.2
+	 */
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event)
 	{
