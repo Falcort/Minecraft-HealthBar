@@ -1,0 +1,6 @@
+name: HealthBar
+version : 0.1
+main: HealthBar.main
+author: Falcort
+website: http://thibaultsouquet.fr/
+description: This plugin is design to create healtbar
