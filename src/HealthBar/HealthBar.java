@@ -177,8 +177,8 @@ public class HealthBar implements Listener
 	 */
 	private void updateHealthBar(Entity entity, LivingEntity living, Double MaxHealth, Double CurrentHealth)
 	{
-		int max = (int) Math.floor(MaxHealth);
-		int current = (int) Math.floor(CurrentHealth);
+		int max = (int) Math.round(MaxHealth);
+		int current = (int) Math.round(CurrentHealth);
 		if (living instanceof Player)
 		{
 			Player player = (Player) entity;
@@ -221,8 +221,8 @@ public class HealthBar implements Listener
 	 */
 	private void updateHealthBar(Entity entity, LivingEntity living, Double MaxHealth, Double CurrentHealth, int ID)
 	{
-		int max = (int) Math.floor(MaxHealth);
-		int current = (int) Math.floor(CurrentHealth);
+		int max = roundUp(MaxHealth);
+		int current = roundUp(CurrentHealth);
 		if (living instanceof Player)
 		{
 			Player player = (Player) entity;
@@ -301,5 +301,30 @@ public class HealthBar implements Listener
 				bellowObj.setDisplaySlot(DisplaySlot.BELOW_NAME);
 			}
 		}, 5);
+	}
+	
+	/**
+	 * JavaDoc roundUp
+	 * This method take the upper around of the double send
+	 * Use for the HP left of mobs, so they can't have 0 hp display i they have 0.2
+	 * 
+	 * @param d
+	 * @return life of entity
+	 * @author Falcort alias Thibault SOUQUET
+	 * @version 0.2
+	 */
+	public static int roundUp(double d)
+	{
+	    int i = (int) d;
+	    double reste = d - i;
+	    if (reste > 0.0)
+	    {
+	    	i++;
+	    }
+	    if (i<0)
+	    {
+	    	return 0;
+	    }
+	    return i;
 	}
 }
