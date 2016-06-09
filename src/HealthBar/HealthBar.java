@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -70,7 +73,11 @@ public class HealthBar implements Listener
 				Double CurrentHealth = living.getHealth();
 				
 				String customName = entity.getCustomName();
-				if (customName != null && !(customName.contains("❤")))
+				if (living instanceof ArmorStand)
+				{
+					return;
+				}
+				else if (customName != null && !(customName.contains("❤")))
 				{
 					if(!(namesTable.containsKey(entity.getEntityId())))
 					{
@@ -94,6 +101,7 @@ public class HealthBar implements Listener
 			}
 		}, 5);
 	}
+	
 	/**
 	 * JavaDoc onEntityDamageEvent
 	 * This method listen for entity damage and update the HealthBar
@@ -119,6 +127,7 @@ public class HealthBar implements Listener
 	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event)
 	{
+		holoDeath(event.getEntity());
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
 		{
 			public void run()
@@ -131,6 +140,7 @@ public class HealthBar implements Listener
 		}, 60);
 		
 	}
+	
 	/**
 	 * JavaDoc onEntityRegainHealthEvent
 	 * This method listen for regain of life for Player and Entity
@@ -177,8 +187,8 @@ public class HealthBar implements Listener
 	 */
 	private void updateHealthBar(Entity entity, LivingEntity living, Double MaxHealth, Double CurrentHealth)
 	{
-		int max = (int) Math.round(MaxHealth);
-		int current = (int) Math.round(CurrentHealth);
+		int max = (int) roundUp(MaxHealth);
+		int current = (int) roundUp(CurrentHealth);
 		if (living instanceof Player)
 		{
 			Player player = (Player) entity;
@@ -248,6 +258,39 @@ public class HealthBar implements Listener
 				entity.setCustomName(namesTable.get(ID) + " " + ChatColor.RED + current + ChatColor.WHITE + " / " + max + ChatColor.RED + "❤");
 			}
 		}
+	}
+	
+	private void holoDeath(Entity entity)
+	{	
+		Location loc = entity.getLocation();
+		loc.setY(loc.getY()-1);
+		
+		ArmorStand stand = loc.getWorld().spawn(loc, ArmorStand.class);
+		stand.setBasePlate(false);
+		stand.setCustomNameVisible(true);
+		stand.setVisible(false);
+		stand.setInvulnerable(true);
+		stand.setGravity(false);
+		if (namesTable.containsKey(entity.getEntityId()))
+		{
+			stand.setCustomName(ChatColor.RED + namesTable.get(entity.getEntityId()) + " est mort");
+		}
+		else if (entity instanceof Creeper)
+		{
+			stand.setCustomName(ChatColor.RED + "Le creeper est mort");
+		}
+		else
+		{
+			stand.setCustomName(ChatColor.RED + "Mort");
+		}
+		
+		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable()
+		{
+			public void run()
+			{
+				stand.remove();
+			}
+		}, 45);
 	}
 	
 	/**
